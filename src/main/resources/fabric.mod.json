@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "minesocket",
+  "version": "${version}",
+  "name": "MineSocket",
+  "description": "Simple minecraft mod that enables websocket communication with your server, that being a singleplayer or a multiplayer world.",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/minesocket/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+        "org.zamecki.minesocket.MineSocket"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
