@@ -13,15 +13,17 @@ import java.util.List;
 
 public class LangController {
     Path configPath;
+    Logger logger;
 
-    public LangController(String modId, Logger logger) {
+    public LangController(String modId, Logger _logger) {
+        logger = _logger;
         logger.info("LangController is initializing");
         configPath = Paths.get("config/" + modId + "/lang");
-        createConfigDirectory(logger);
-        copyAllLanguageFiles(modId, logger);
+        createConfigDirectory();
+        copyAllLanguageFiles(modId);
     }
 
-    private void createConfigDirectory(Logger logger) {
+    private void createConfigDirectory() {
         try {
             Files.createDirectories(configPath);
             logger.info("Config directory created");
@@ -30,8 +32,8 @@ public class LangController {
         }
     }
 
-    private void copyAllLanguageFiles(String modId, Logger logger) {
-        getLanguageFilesToCopy(modId, logger).forEach(path -> copyLanguageFile(modId, logger, path));
+    private void copyAllLanguageFiles(String modId) {
+        getLanguageFilesToCopy(modId, logger).forEach(path -> copyLanguageFile(modId, path));
     }
 
     private List<Path> getLanguageFilesToCopy(String modId, Logger logger) {
@@ -52,7 +54,7 @@ public class LangController {
         }
     }
 
-    private void copyLanguageFile(String modId, Logger logger, Path filePath) {
+    private void copyLanguageFile(String modId, Path filePath) {
         try (InputStream stream = getClass().getResourceAsStream("/assets/" + modId + "/lang/" + filePath.getFileName())) {
             if (stream == null) {
                 logger.error("Resource path not found");
