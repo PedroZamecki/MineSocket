@@ -29,6 +29,7 @@ public class MineSocket implements ModInitializer {
         String host = "localhost";
         int port = 8887;
         wsService = new WebSocketService(new InetSocketAddress(host, port), logger, langController);
+        wsService.setConnectionLostTimeout(10);
         wsService.start();
     }
 
