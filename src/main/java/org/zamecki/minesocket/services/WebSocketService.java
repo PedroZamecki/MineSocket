@@ -11,11 +11,13 @@ import java.net.InetSocketAddress;
 public class WebSocketService extends WebSocketServer {
     Logger logger;
     LangController langController;
+    MessageService messageService;
 
-    public WebSocketService(InetSocketAddress address, Logger _logger, LangController _langController) {
+    public WebSocketService(InetSocketAddress address, Logger _logger, LangController _langController, MessageService _messageService) {
         super(address);
         logger = _logger;
         langController = _langController;
+        messageService = _messageService;
     }
 
     @Override
@@ -31,6 +33,7 @@ public class WebSocketService extends WebSocketServer {
     @Override
     public void onMessage(WebSocket conn, String message) {
         logger.info("Received message from {}: {}", conn.getRemoteSocketAddress(), message);
+        messageService.handleMessage(message);
     }
 
     @Override
