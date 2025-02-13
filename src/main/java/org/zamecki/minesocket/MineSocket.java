@@ -1,11 +1,14 @@
 package org.zamecki.minesocket;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
+import org.zamecki.minesocket.controller.CommandController;
 import org.zamecki.minesocket.controller.LangController;
+import org.zamecki.minesocket.controller.SettingsController;
 import org.zamecki.minesocket.services.MessageService;
 import org.zamecki.minesocket.services.WebSocketService;
 
@@ -15,6 +18,7 @@ public class MineSocket implements ModInitializer {
     String MOD_ID = "minesocket";
     Logger logger = org.slf4j.LoggerFactory.getLogger("MineSocket");
     LangController langController;
+    SettingsController settingsController;
     WebSocketService wsService;
     MessageService messageService;
 
@@ -24,6 +28,12 @@ public class MineSocket implements ModInitializer {
 
         // Initialize the LangController
         langController = new LangController(MOD_ID, logger);
+
+        // Initialize the SettingsController
+        settingsController = new SettingsController(MOD_ID, logger);
+
+        // Register the commands
+        registerCommands();
 
         // Register events callbacks
         registerEventsCallbacks();
@@ -36,6 +46,7 @@ public class MineSocket implements ModInitializer {
         wsService.setConnectionLostTimeout(10);
     }
 
+
     private void registerEventsCallbacks() {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             var player = handler.getPlayer();
@@ -45,6 +56,7 @@ public class MineSocket implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            logger.info("WebSocket server starting on {}:{}", wsService.getAddress().getHostName(), wsService.getAddress().getPort());
             messageService.setServer(server);
             wsService.start();
         });
@@ -57,5 +69,9 @@ public class MineSocket implements ModInitializer {
                 logger.error("Error stopping WebSocket server: {}", String.valueOf(e));
             }
         });
+    }
+
+    private void registerCommands() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> CommandController.register(dispatcher));
     }
 }
