@@ -8,10 +8,10 @@
   "contact": {},
   "license": "MIT",
   "icon": "assets/minesocket/icon.png",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": [
-        "org.zamecki.minesocket.MineSocket"
+      "org.zamecki.minesocket.MineSocket"
     ]
   },
   "depends": {
