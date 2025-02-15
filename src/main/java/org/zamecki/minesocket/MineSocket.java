@@ -1,7 +1,6 @@
 package org.zamecki.minesocket;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.text.Text;
@@ -32,9 +31,6 @@ public class MineSocket implements ModInitializer {
         // Initialize the SettingsController
         settingsController = new SettingsController(MOD_ID, logger);
 
-        // Register the commands
-        registerCommands();
-
         // Register events callbacks
         registerEventsCallbacks();
 
@@ -43,7 +39,9 @@ public class MineSocket implements ModInitializer {
         int port = 8887;
         messageService = new MessageService();
         wsService = new WebSocketService(new InetSocketAddress(host, port), logger, langController, messageService);
-        wsService.setConnectionLostTimeout(10);
+
+        // Register the commands
+        CommandController.register(wsService);
     }
 
 
@@ -56,22 +54,20 @@ public class MineSocket implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            logger.info("WebSocket server starting on {}:{}", wsService.getAddress().getHostName(), wsService.getAddress().getPort());
             messageService.setServer(server);
-            wsService.start();
+            if (server.isDedicated()) {
+                boolean res = wsService.tryToStart();
+                if (!res) {
+                    server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_open_error", "MineSocket WebSocket server failed to start"));
+                }
+            }
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            try {
-                wsService.stop();
-                logger.info("WebSocket server stopped");
-            } catch (InterruptedException e) {
-                logger.error("Error stopping WebSocket server: {}", String.valueOf(e));
+            boolean res = wsService.tryToStop();
+            if (!res) {
+                server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_close_error", "MineSocket WebSocket server failed to stop"));
             }
         });
-    }
-
-    private void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> CommandController.register(dispatcher));
     }
 }

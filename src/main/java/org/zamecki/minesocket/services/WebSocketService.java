@@ -8,41 +8,80 @@ import org.zamecki.minesocket.controller.LangController;
 
 import java.net.InetSocketAddress;
 
-public class WebSocketService extends WebSocketServer {
-    Logger logger;
-    LangController langController;
-    MessageService messageService;
+public class WebSocketService {
+    private final Logger logger;
+    private final LangController langController;
+    private final MessageService messageService;
+    private final InetSocketAddress address;
+    private WebSocketServer wsServer;
+    private boolean isRunning = false;
 
-    public WebSocketService(InetSocketAddress address, Logger _logger, LangController _langController, MessageService _messageService) {
-        super(address);
-        logger = _logger;
-        langController = _langController;
-        messageService = _messageService;
+    public WebSocketService(InetSocketAddress address, Logger logger, LangController langController, MessageService messageService) {
+        this.address = address;
+        this.logger = logger;
+        this.langController = langController;
+        this.messageService = messageService;
     }
 
-    @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        logger.info("New connection from {}", conn.getRemoteSocketAddress());
+    public boolean isRunning() {
+        return wsServer != null && isRunning;
     }
 
-    @Override
-    public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        logger.info("Closed connection to {}", conn.getRemoteSocketAddress());
+    public boolean tryToStart() {
+        if (isRunning()) {
+            logger.error("WebSocket server is already running");
+            return false;
+        }
+        try {
+            wsServer = new WebSocketServer(address) {
+                @Override
+                public void onOpen(WebSocket conn, ClientHandshake handshake) {
+                    logger.info("New connection from {}", conn.getRemoteSocketAddress());
+                }
+
+                @Override
+                public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+                    logger.info("Closed connection to {}", conn.getRemoteSocketAddress());
+                }
+
+                @Override
+                public void onMessage(WebSocket conn, String message) {
+                    logger.info("Received message from {}: {}", conn.getRemoteSocketAddress(), message);
+                    messageService.handleMessage(message);
+                }
+
+                @Override
+                public void onError(WebSocket conn, Exception ex) {
+                    logger.error("Error on connection to {}", conn.getRemoteSocketAddress(), ex);
+                }
+
+                @Override
+                public void onStart() {
+                    isRunning = true;
+                }
+            };
+            wsServer.start();
+            logger.info("WebSocket server started");
+            return true;
+        } catch (Exception e) {
+            logger.error("Error starting WebSocket server: ", e);
+            return false;
+        }
     }
 
-    @Override
-    public void onMessage(WebSocket conn, String message) {
-        logger.info("Received message from {}: {}", conn.getRemoteSocketAddress(), message);
-        messageService.handleMessage(message);
-    }
-
-    @Override
-    public void onError(WebSocket conn, Exception ex) {
-        logger.error("Error on connection to {}", conn.getRemoteSocketAddress(), ex);
-    }
-
-    @Override
-    public void onStart() {
-        logger.info("WebSocket server started");
+    public boolean tryToStop() {
+        if (!isRunning()) {
+            logger.error("WebSocket server is not running");
+            return false;
+        }
+        try {
+            wsServer.stop();
+            wsServer = null;
+            logger.info("WebSocket server stopped");
+            return true;
+        } catch (Exception e) {
+            logger.error("Error stopping WebSocket server: ", e);
+            return false;
+        }
     }
 }
