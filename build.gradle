@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 version = project.mod_version
@@ -34,9 +37,14 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "org.java-websocket:Java-WebSocket:${project.java_websocket_version}"
-
+    include(group: 'org.java-websocket', name: 'Java-WebSocket', version: project.java_websocket_version)
+    implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: project.java_websocket_version
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+tasks.withType(ShadowJar).configureEach {
+    archiveClassifier.set("")
+    relocate 'org.java_websocket', 'org.zamecki.minesocket.shadow.org.java_websocket'
 }
 
 processResources {
