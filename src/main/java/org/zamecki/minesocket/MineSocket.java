@@ -37,7 +37,7 @@ public class MineSocket implements ModInitializer {
         // Initialize the WebSocketService
         String host = "localhost";
         int port = 8887;
-        messageService = new MessageService();
+        messageService = new MessageService(logger);
         wsService = new WebSocketService(new InetSocketAddress(host, port), logger, langController, messageService);
 
         // Register the commands
@@ -55,19 +55,21 @@ public class MineSocket implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             messageService.setServer(server);
-            if (server.isDedicated()) {
-                boolean res = wsService.tryToStart();
-                if (!res) {
-                    server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_open_error", "MineSocket WebSocket server failed to start"));
-                }
+            boolean res = wsService.tryToStart();
+            if (!res) {
+                server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_open_error", "MineSocket WebSocket server failed to start"));
+                return;
             }
+            server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_open", "MineSocket WebSocket server started"));
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             boolean res = wsService.tryToStop();
             if (!res) {
                 server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_close_error", "MineSocket WebSocket server failed to stop"));
+                return;
             }
+            server.sendMessage(Text.translatableWithFallback(MOD_ID + ".callback.on_close", "MineSocket WebSocket server stopped"));
         });
     }
 }
