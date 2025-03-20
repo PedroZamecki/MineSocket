@@ -3,23 +3,19 @@ package org.zamecki.minesocket.services;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.slf4j.Logger;
-import org.zamecki.minesocket.controller.LangController;
 
 import java.net.InetSocketAddress;
 
+import static org.zamecki.minesocket.ModData.logger;
+
 public class WebSocketService {
-    private final Logger logger;
-    private final LangController langController;
     private final MessageService messageService;
     private final InetSocketAddress address;
     private WebSocketServer wsServer;
     private boolean isRunning = false;
 
-    public WebSocketService(InetSocketAddress address, Logger logger, LangController langController, MessageService messageService) {
+    public WebSocketService(InetSocketAddress address, MessageService messageService) {
         this.address = address;
-        this.logger = logger;
-        this.langController = langController;
         this.messageService = messageService;
     }
 

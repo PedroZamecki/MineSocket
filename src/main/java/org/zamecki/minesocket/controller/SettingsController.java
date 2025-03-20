@@ -1,7 +1,5 @@
 package org.zamecki.minesocket.controller;
 
-import org.slf4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,17 +10,18 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.zamecki.minesocket.ModData.MOD_ID;
+import static org.zamecki.minesocket.ModData.logger;
+
 public class SettingsController {
     private final Path settingsPath;
-    private final Logger logger;
     private final Map<String, String> currentSettings = new HashMap<>();
 
-    public SettingsController(String modId, Logger _logger) {
-        logger = _logger;
+    public SettingsController() {
         logger.info("SettingsController is initializing");
-        settingsPath = Paths.get("settings/" + modId + "/settings");
+        settingsPath = Paths.get("settings/" + MOD_ID + "/settings");
         createSettingsDirectory();
-        loadAllSettingsFiles(modId);
+        loadAllSettingsFiles();
     }
 
     private void createSettingsDirectory() {
@@ -34,8 +33,8 @@ public class SettingsController {
         }
     }
 
-    private void loadAllSettingsFiles(String modId) {
-        try (var stream = getClass().getResourceAsStream("/assets/" + modId + "/settings")) {
+    private void loadAllSettingsFiles() {
+        try (var stream = getClass().getResourceAsStream("/assets/" + MOD_ID + "/settings")) {
             if (stream == null) {
                 logger.error("Resource path not found");
                 return;
@@ -43,14 +42,14 @@ public class SettingsController {
             new BufferedReader(new InputStreamReader(stream))
                 .lines()
                 .filter(line -> line.endsWith(".json"))
-                .forEach(fileName -> loadSettingsFile(modId, fileName));
+                .forEach(this::loadSettingsFile);
         } catch (IOException e) {
             logger.error("Error loading settings files", e);
         }
     }
 
-    private void loadSettingsFile(String modId, String fileName) {
-        try (InputStream stream = getClass().getResourceAsStream("/assets/" + modId + "/settings/" + fileName)) {
+    private void loadSettingsFile(String fileName) {
+        try (InputStream stream = getClass().getResourceAsStream("/assets/" + MOD_ID + "/settings/" + fileName)) {
             if (stream == null) {
                 logger.error("Resource path not found for file: {}", fileName);
                 return;

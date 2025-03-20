@@ -1,15 +1,11 @@
 package org.zamecki.minesocket.services;
 
 import net.minecraft.server.MinecraftServer;
-import org.slf4j.Logger;
+
+import static org.zamecki.minesocket.ModData.logger;
 
 public class MessageService {
     MinecraftServer server;
-    Logger logger;
-
-    public MessageService(Logger logger) {
-        this.logger = logger;
-    }
 
     public void setServer(MinecraftServer server) {
         this.server = server;
