@@ -41,7 +41,7 @@ dependencies {
     include(group: 'org.java-websocket', name: 'Java-WebSocket', version: project.java_websocket_version)
     implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: project.java_websocket_version
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation include("xyz.nucleoid:server-translations-api:${project.server_translations_api_version}")
+    modImplementation "xyz.nucleoid:server-translations-api:${project.server_translations_api_version}"
 }
 
 tasks.withType(ShadowJar).configureEach {

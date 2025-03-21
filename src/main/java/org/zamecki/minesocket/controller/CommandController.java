@@ -21,8 +21,8 @@ public class CommandController {
     }
 
     private int sendHelp(CommandContext<ServerCommandSource> ctx) {
-        ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID +
-                ".command.help",
+        ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
+                "command" + MOD_ID + "help",
             """
                 MineSocket Help:
                 /ms - Main command
@@ -35,17 +35,17 @@ public class CommandController {
     private int startWebSocket(CommandContext<ServerCommandSource> ctx, WebSocketService wsService) {
         if (!wsService.isRunning()) {
             if (!wsService.tryToStart()) {
-                ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID +
-                        ".command.start_error",
+                ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
+                        "command" + MOD_ID + "start_error",
                     "An error occurred while starting the WebSocket server"), false);
                 return 0;
             }
-            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID +
-                    ".command.started",
+            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
+                    "command" + MOD_ID + "started",
                 "WebSocket server started"), false);
         } else {
-            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID +
-                    ".command.already_running",
+            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
+                    "command" + MOD_ID + "already_running",
                 "WebSocket server is already running"), false);
         }
         return 1;
@@ -54,14 +54,14 @@ public class CommandController {
     private int stopWebSocket(CommandContext<ServerCommandSource> ctx, WebSocketService wsService) {
         if (wsService.isRunning()) {
             if (!wsService.tryToStop()) {
-                ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID + ".command.stop_error",
+                ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command" + MOD_ID + "stop_error",
                     "An error occurred while stopping the WebSocket server"), false);
                 return 0;
             }
-            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID + ".command.stopped",
+            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command" + MOD_ID + "stopped",
                 "WebSocket server stopped"), false);
         } else {
-            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(MOD_ID + ".command.not_running",
+            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command" + MOD_ID + "not_running",
                 "WebSocket server is not running"), false);
         }
         return 1;

@@ -44,44 +44,38 @@ public class MineSocket implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             var player = handler.getPlayer();
             if (player.getPermissionLevel() >= server.getOpPermissionLevel() && server.isDedicated()) {
-                player.sendMessage(Text.translatableWithFallback(MOD_ID +
-                        ".callback.on_op_join",
-                    "You are using MineSocket, you can configure/use the mod by using the '/minesocket' command "));
+                player.sendMessage(Text.translatableWithFallback("callback" + MOD_ID + "on_op_join",
+                    "You are using MineSocket, you can configure/use the mod by using the '/ms' command "));
             }
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             messageService.setServer(server);
             if (!server.isDedicated()) {
-                server.sendMessage(Text.translatableWithFallback(MOD_ID +
-                        ".callback.on_singleplayer",
-                    "MineSocket is available in singleplayer, but you need to activate with the command '/minesocket'"));
+                server.sendMessage(Text.translatableWithFallback("callback" + MOD_ID + "on_singleplayer",
+                    "MineSocket is available in singleplayer, but you need to activate with the command '/ms'"));
                 return;
             }
 
             boolean res = wsService.tryToStart();
             if (!res) {
-                server.sendMessage(Text.translatableWithFallback(MOD_ID +
-                        ".callback.on_open_error",
+                server.sendMessage(Text.translatableWithFallback("callback" + MOD_ID + "on_open_error",
                     "MineSocket WebSocket server failed to start"));
                 return;
             }
 
-            server.sendMessage(Text.translatableWithFallback(MOD_ID +
-                    ".callback.on_open",
+            server.sendMessage(Text.translatableWithFallback("callback" + MOD_ID + "on_open",
                 "MineSocket WebSocket server started"));
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             boolean res = wsService.tryToStop();
             if (!res) {
-                server.sendMessage(Text.translatableWithFallback(MOD_ID +
-                        ".callback.on_close_error",
+                server.sendMessage(Text.translatableWithFallback("callback" + MOD_ID + "on_close_error",
                     "MineSocket WebSocket server failed to stop"));
                 return;
             }
-            server.sendMessage(Text.translatableWithFallback(MOD_ID +
-                    ".callback.on_close",
+            server.sendMessage(Text.translatableWithFallback("callback" + MOD_ID + "on_close",
                 "MineSocket WebSocket server stopped"));
         });
     }
