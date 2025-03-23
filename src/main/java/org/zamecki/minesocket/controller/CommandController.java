@@ -14,6 +14,8 @@ public class CommandController {
     public CommandController(WebSocketService wsService) {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
             dispatcher.register(CommandManager.literal("ms")
+                // Uses the LuckPerms permission system to check if the player has the permission to use the command
+                .requires(source -> source.hasPermissionLevel(source.getServer().getOpPermissionLevel()))
                 .executes(this::sendHelp)
                 .then(CommandManager.literal("help").executes(this::sendHelp))
                 .then(CommandManager.literal("start").executes(ctx -> startWebSocket(ctx, wsService)))
@@ -22,7 +24,7 @@ public class CommandController {
 
     private int sendHelp(CommandContext<ServerCommandSource> ctx) {
         ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
-                "command" + MOD_ID + "help",
+            "command." + MOD_ID + ".help",
             """
                 MineSocket Help:
                 /ms - Main command
@@ -36,16 +38,16 @@ public class CommandController {
         if (!wsService.isRunning()) {
             if (!wsService.tryToStart()) {
                 ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
-                        "command" + MOD_ID + "start_error",
+                    "command." + MOD_ID + ".start_error",
                     "An error occurred while starting the WebSocket server"), false);
                 return 0;
             }
             ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
-                    "command" + MOD_ID + "started",
+                "command." + MOD_ID + ".started",
                 "WebSocket server started"), false);
         } else {
             ctx.getSource().sendFeedback(() -> Text.translatableWithFallback(
-                    "command" + MOD_ID + "already_running",
+                "command." + MOD_ID + ".already_running",
                 "WebSocket server is already running"), false);
         }
         return 1;
@@ -54,14 +56,14 @@ public class CommandController {
     private int stopWebSocket(CommandContext<ServerCommandSource> ctx, WebSocketService wsService) {
         if (wsService.isRunning()) {
             if (!wsService.tryToStop()) {
-                ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command" + MOD_ID + "stop_error",
+                ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command." + MOD_ID + ".stop_error",
                     "An error occurred while stopping the WebSocket server"), false);
                 return 0;
             }
-            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command" + MOD_ID + "stopped",
+            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command." + MOD_ID + ".stopped",
                 "WebSocket server stopped"), false);
         } else {
-            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command" + MOD_ID + "not_running",
+            ctx.getSource().sendFeedback(() -> Text.translatableWithFallback("command." + MOD_ID + ".not_running",
                 "WebSocket server is not running"), false);
         }
         return 1;
