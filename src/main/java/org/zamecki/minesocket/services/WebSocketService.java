@@ -3,20 +3,23 @@ package org.zamecki.minesocket.services;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.zamecki.minesocket.config.MineSocketConfiguration;
 
 import java.net.InetSocketAddress;
 
 import static org.zamecki.minesocket.ModData.logger;
 
 public class WebSocketService {
+    private final MineSocketConfiguration config;
     private final MessageService messageService;
-    private final InetSocketAddress address;
+    private InetSocketAddress address;
     private WebSocketServer wsServer;
     private boolean isRunning = false;
 
-    public WebSocketService(InetSocketAddress address, MessageService messageService) {
-        this.address = address;
+    public WebSocketService(MineSocketConfiguration config, MessageService messageService) {
+        this.address = new InetSocketAddress(config.host, config.port);
         this.messageService = messageService;
+        this.config = config;
     }
 
     public boolean isRunning() {
@@ -57,7 +60,7 @@ public class WebSocketService {
                 }
             };
             wsServer.start();
-            logger.info("WebSocket server started");
+            logger.info("WebSocket server started on {}:{}", address.getHostString(), address.getPort());
             return true;
         } catch (Exception e) {
             logger.error("Error starting WebSocket server: ", e);
@@ -67,7 +70,6 @@ public class WebSocketService {
 
     public boolean tryToStop() {
         if (!isRunning()) {
-            logger.error("WebSocket server is not running");
             return false;
         }
         try {
@@ -79,5 +81,10 @@ public class WebSocketService {
             logger.error("Error stopping WebSocket server: ", e);
             return false;
         }
+    }
+
+    public boolean tryToReload() {
+        this.address = new InetSocketAddress(config.host, config.port);
+        return tryToStop() && tryToStart();
     }
 }

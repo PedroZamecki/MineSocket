@@ -1,4 +1,6 @@
-<p style="text-align: center;"><img src="src/main/resources/assets/minesocket/icon.png" width="128" height="128" alt="MineSocket Logo"></p>
+<div style="text-align: center; align-items: center; align-content: center;">
+<img src="src/main/resources/assets/minesocket/icon.png" width="128" height="128" alt="MineSocket Logo">
+</div>
 
 # MineSocket
 

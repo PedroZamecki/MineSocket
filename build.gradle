@@ -1,9 +1,6 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
     id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 version = project.mod_version
@@ -37,26 +34,22 @@ dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    include(group: 'org.java-websocket', name: 'Java-WebSocket', version: project.java_websocket_version)
-    implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: project.java_websocket_version
+    include implementation("org.java-websocket:Java-WebSocket:${project.java_websocket_version}")
+    include implementation("com.electronwill.night-config:toml:${nightconfig_version}")
+    include implementation("com.electronwill.night-config:core:${nightconfig_version}")
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "xyz.nucleoid:server-translations-api:${project.server_translations_api_version}"
 }
 
-tasks.withType(ShadowJar).configureEach {
-    archiveClassifier.set("")
-    relocate 'org.java_websocket', 'org.zamecki.minesocket.shadow.org.java_websocket'
-}
-
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", project.version+"-"+project.minecraft_version
     inputs.property "minecraft_version", project.minecraft_version
     inputs.property "loader_version", project.loader_version
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version,
+        expand "version": project.version + "-" + project.minecraft_version,
             "minecraft_version": project.minecraft_version,
             "loader_version": project.loader_version
     }
