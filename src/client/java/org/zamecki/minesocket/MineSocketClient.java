@@ -22,7 +22,7 @@ public class MineSocketClient implements ClientModInitializer {
             }
 
             player.sendMessage(Text.translatable("callback." + MOD_ID + ".on_singleplayer",
-                "MineSocket is available in singleplayer, but you need to activate with the command '/ms'"), true);
+                "MineSocket is available in singleplayer, but you need to activate with the command '/ms'"), false);
 
             PermissionCheckEvent.EVENT.register((source, permission) -> {
                 if (permission.startsWith("command." + MOD_ID + ".ms")) {

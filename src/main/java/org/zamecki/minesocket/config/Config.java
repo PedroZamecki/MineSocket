@@ -69,9 +69,7 @@ public abstract class Config implements UnmodifiableConfig, CommentedConfig {
 
     private static String readToml(Path path) {
         // Create parent directories as needed
-        if (!path.getParent().toFile().mkdirs()) {
-            logger.error("Failed to create parent directories for {}", path);
-        }
+        path.getParent().toFile().mkdirs();
 
         try {
             return Files.readString(path);

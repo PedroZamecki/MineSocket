@@ -41,7 +41,7 @@ public class MineSocket implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             var player = handler.getPlayer();
 
-            if (Permissions.check(player, "command." + MOD_ID + ".ms", 3)) {
+            if (!server.isDedicated() || Permissions.check(player, "command." + MOD_ID + ".ms", 3)) {
                 return;
             }
 

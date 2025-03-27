@@ -20,7 +20,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "1.21.*",
+    "minecraft": "${compatible_minecraft_versions}",
     "fabric-permissions-api-v0": "*"
   }
 }
