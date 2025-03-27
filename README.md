@@ -10,7 +10,7 @@ This mod is still in development and is not yet ready for use.
 ## Features
 
 - [x] Handle (dis)connections to a websocket
-- [x] Receive messages from a websocket
+- [x] Receive messages from a websocket client (i.e. Streamer.bot)
 - [ ] Secure connection with the websocket
 - [ ] Handle callbacks from the server
 
