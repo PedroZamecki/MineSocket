@@ -12,11 +12,15 @@
   "entrypoints": {
     "main": [
       "org.zamecki.minesocket.MineSocket"
+    ],
+    "client": [
+      "org.zamecki.minesocket.MineSocketClient"
     ]
   },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "1.21.*",
+    "fabric-permissions-api-v0": "*"
   }
 }

@@ -1,6 +1,7 @@
 package org.zamecki.minesocket.controller;
 
 import com.mojang.brigadier.context.CommandContext;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -15,7 +16,7 @@ public class CommandController {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
             dispatcher.register(CommandManager.literal("ms")
                 // Uses the LuckPerms permission system to check if the player has the permission to use the command
-                .requires(source -> source.hasPermissionLevel(source.getServer().getOpPermissionLevel()))
+                .requires(source -> Permissions.check(source, "command." + MOD_ID + ".ms", 3))
                 .executes(this::sendHelp)
                 .then(CommandManager.literal("help").executes(this::sendHelp))
                 .then(CommandManager.literal("start").executes(ctx -> startWebSocket(ctx, wsService)))

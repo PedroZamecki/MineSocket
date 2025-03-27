@@ -1,5 +1,6 @@
 package org.zamecki.minesocket;
 
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -40,13 +41,8 @@ public class MineSocket implements ModInitializer {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             var player = handler.getPlayer();
 
-            if (!player.hasPermissionLevel(server.getOpPermissionLevel())) {
+            if (Permissions.check(player, "command." + MOD_ID + ".ms", 3)) {
                 return;
-            }
-
-            if (!server.isDedicated()) {
-                server.sendMessage(Text.translatable("callback." + MOD_ID + ".on_singleplayer",
-                    "MineSocket is available in singleplayer, but you need to activate with the command '/ms'"));
             }
 
             player.sendMessage(Text.translatable("callback." + MOD_ID + ".on_op_join",
@@ -59,39 +55,16 @@ public class MineSocket implements ModInitializer {
                 return;
             }
 
-            boolean res = wsService.tryToStart();
-            if (!res) {
-                server.sendMessage(Text.translatable("callback." + MOD_ID + ".on_open_error",
-                    "MineSocket WebSocket server failed to start"));
-                return;
-            }
-
-            server.sendMessage(Text.translatable("callback." + MOD_ID + ".on_open",
-                "MineSocket WebSocket server started"));
+            wsService.tryToStart();
         });
 
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
-            if (!wsService.isRunning()) {
-                return;
-            }
-
-            boolean res = wsService.tryToStop();
-            if (!res) {
-                server.sendMessage(Text.translatable("callback." + MOD_ID + ".on_close_error",
-                    "MineSocket WebSocket server failed to stop"));
-                return;
-            }
-            server.sendMessage(Text.translatable("callback." + MOD_ID + ".on_close",
-                "MineSocket WebSocket server stopped"));
-        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> wsService.tryToStop());
 
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(((server, resourceManager, success) -> {
             logger.info("Reloading configuration");
             try {
                 config.reload();
-                if (!wsService.tryToReload()) {
-                    logger.error("Error reloading WebSocket server");
-                }
+                wsService.tryToReload();
             } catch(Exception e) {
                 logger.error("Error reloading configuration: {}", e.getMessage());
             }

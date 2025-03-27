@@ -83,8 +83,10 @@ public class WebSocketService {
         }
     }
 
-    public boolean tryToReload() {
+    public void tryToReload() {
         this.address = new InetSocketAddress(config.host, config.port);
-        return tryToStop() && tryToStart();
+        if (tryToStop()) {
+            tryToStart();
+        }
     }
 }
