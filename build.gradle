@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.9-SNAPSHOT'
+    id 'fabric-loom' version '1.10.1'
     id 'maven-publish'
 }
 
@@ -37,19 +37,20 @@ dependencies {
     include implementation("org.java-websocket:Java-WebSocket:${project.java_websocket_version}")
     include implementation("com.electronwill.night-config:toml:${nightconfig_version}")
     include implementation("com.electronwill.night-config:core:${nightconfig_version}")
+    include(modImplementation("me.lucko:fabric-permissions-api:${lucko_permissions_version}"))
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "xyz.nucleoid:server-translations-api:${project.server_translations_api_version}"
 }
 
 processResources {
-    inputs.property "version", project.version+"-"+project.minecraft_version
+    inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
     inputs.property "loader_version", project.loader_version
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version + "-" + project.minecraft_version,
+        expand "version": project.version,
             "minecraft_version": project.minecraft_version,
             "loader_version": project.loader_version
     }
