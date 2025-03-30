@@ -1,6 +1,9 @@
 package org.zamecki.minesocket.event;
 
 public interface IGameEvent {
-    void execute(String[] args);
     String getName();
+
+    void start(String[] args);
+
+    boolean tick();
 }

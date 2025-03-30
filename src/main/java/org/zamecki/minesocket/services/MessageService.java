@@ -47,5 +47,9 @@ public class MessageService {
             logger.error("Unknown command or event: '{}'", command);
         }
     }
+
+    public void tick() {
+        eventManager.onServerTick();
+    }
 }
 

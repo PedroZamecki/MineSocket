@@ -1,11 +1,15 @@
 package org.zamecki.minesocket.event;
 
 import net.minecraft.server.MinecraftServer;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventManager {
     private final Map<String, IGameEvent> events = new HashMap<>();
+    private final List<IGameEvent> runningEvents = new ArrayList<>();
     private final MinecraftServer server;
 
     public EventManager(MinecraftServer server) {
@@ -24,9 +28,14 @@ public class EventManager {
     public boolean handleEvent(String eventName, String[] args) {
         IGameEvent event = events.get(eventName.toLowerCase());
         if (event != null) {
-            event.execute(args);
+            event.start(args);
+            runningEvents.add(event);
             return true;
         }
         return false;
+    }
+
+    public void onServerTick() {
+        runningEvents.removeIf(IGameEvent::tick);
     }
 }
