@@ -27,12 +27,10 @@ public class EventManager {
 
     public boolean handleEvent(String eventName, String[] args) {
         IGameEvent event = events.get(eventName.toLowerCase());
-        if (event != null) {
-            event.start(args);
-            runningEvents.add(event);
-            return true;
-        }
-        return false;
+        if (event == null) return false;
+        if (!event.start(args)) return false;
+        runningEvents.add(event);
+        return true;
     }
 
     public void onServerTick() {
