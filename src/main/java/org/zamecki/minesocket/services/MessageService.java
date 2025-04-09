@@ -1,6 +1,7 @@
 package org.zamecki.minesocket.services;
 
 import net.minecraft.server.MinecraftServer;
+import org.zamecki.minesocket.config.MineSocketConfiguration;
 import org.zamecki.minesocket.event.EventManager;
 
 import static org.zamecki.minesocket.ModData.logger;
@@ -9,9 +10,13 @@ public class MessageService {
     MinecraftServer server;
     EventManager eventManager;
 
-    public void setServer(MinecraftServer server) {
+    public void start(MinecraftServer server, MineSocketConfiguration config) {
+        if (server == null) {
+            logger.error("Server is not set");
+            return;
+        }
         this.server = server;
-        eventManager = new EventManager(server);
+        eventManager = new EventManager(server, config);
     }
 
     public void handleMessage(String message) {

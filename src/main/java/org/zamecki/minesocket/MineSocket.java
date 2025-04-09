@@ -51,7 +51,7 @@ public class MineSocket implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            messageService.setServer(server);
+            messageService.start(server, config);
             if (!server.isDedicated() || !config.autoStart) {
                 return;
             }

@@ -136,7 +136,10 @@ public class FireworkEvent implements IGameEvent {
             return this.bossBarName;
         }
 
-        return Text.translatableWithFallback("event." + MOD_ID + "fireworks.display_name", "Firework Event for player: " + this.playerName, this.playerName);
+        return Text.translatableWithFallback(
+            "event." + MOD_ID + ".fireworks.display_name",
+            "Firework Event for player: %1$s",
+            this.playerName);
     }
 
     @Override
