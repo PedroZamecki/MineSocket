@@ -3,6 +3,7 @@ package org.zamecki.minesocket;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.text.Text;
 import org.zamecki.minesocket.config.MineSocketConfiguration;
@@ -50,7 +51,7 @@ public class MineSocket implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            messageService.setServer(server);
+            messageService.start(server, config);
             if (!server.isDedicated() || !config.autoStart) {
                 return;
             }
@@ -69,5 +70,7 @@ public class MineSocket implements ModInitializer {
                 logger.error("Error reloading configuration: {}", e.getMessage());
             }
         }));
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> messageService.tick());
     }
 }

@@ -17,7 +17,7 @@ public class MineSocketClient implements ClientModInitializer {
     private void registerEventCallbacks() {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             var player = client.player;
-            if (player == null) {
+            if (player == null || client.isInSingleplayer()) {
                 return;
             }
 
