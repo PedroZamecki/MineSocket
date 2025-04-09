@@ -12,5 +12,6 @@
   "command.minesocket.stop_error": "Ocorreu um erro ao parar o servidor WebSocket",
   "command.minesocket.already_running": "O servidor WebSocket já está em execução",
   "command.minesocket.not_running": "O servidor WebSocket não está em execução",
-  "command.minesocket.error": "Ocorreu um erro ao executar o comando"
+  "command.minesocket.error": "Ocorreu um erro ao executar o comando",
+  "event.minesocket.fireworks.display_name": "Evento dos fogos para jogador: %1$s"
 }
