@@ -56,7 +56,9 @@ public class MineSocket implements ModInitializer {
                 return;
             }
 
-            wsService.tryToStart();
+            if  (!wsService.tryToStart()) {
+                logger.error("Failed to start WebSocket server");
+            }
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> wsService.tryToStop());
@@ -65,8 +67,10 @@ public class MineSocket implements ModInitializer {
             logger.info("Reloading configuration");
             try {
                 config.reload();
-                wsService.tryToReload();
-            } catch(Exception e) {
+                if (!wsService.tryToReload()) {
+                    logger.error("Failed to reload WebSocket server");
+                }
+            } catch (Exception e) {
                 logger.error("Error reloading configuration: {}", e.getMessage());
             }
         }));
